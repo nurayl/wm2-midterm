@@ -1,0 +1,17 @@
+https://www.baeldung.com/spring-boot-postgresql-docker
+
+
+1)first step is to package the application as a JAR file:
+- ./mvnw clean package -DskipTests
+
+after this, in /target/ folder, we can see Jar file library-0.0.1-SNAPSHOT.jar
+
+2.1)then we can build out docker image
+docker build -t ada/midterm .
+
+2.2)or, we can use docker-compose. in docker-compose.yml we defined both spring boot app, and database.
+- docker-compose build
+- docker-compose up
+
+now we can make requests to localhost:8080/
+
