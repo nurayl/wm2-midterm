@@ -12,12 +12,16 @@ import org.springframework.stereotype.Service;
 import az.ada.library.Controllers.dtos.BookCreateRequest;
 import az.ada.library.Models.Book;
 import az.ada.library.Models.Category;
+import az.ada.library.Models.Comment;
 import az.ada.library.Models.LibraryBookActions;
 import az.ada.library.Models.PickDropHistory;
+import az.ada.library.Models.Reply;
 import az.ada.library.Models.User;
 import az.ada.library.Repositories.BookRepository;
 import az.ada.library.Repositories.CategoryRepository;
+import az.ada.library.Repositories.CommentRepository;
 import az.ada.library.Repositories.PickDropHistoryRepository;
+import az.ada.library.Repositories.ReplyRepository;
 import az.ada.library.Services.BookService;
 import az.ada.library.Services.dtos.CustomException;
 
@@ -31,12 +35,34 @@ public class BookServiceImpl extends BaseService implements BookService {
 
     @Autowired
     CategoryRepository categoryRepo;
+    
+    @Autowired
+    CommentRepository commentRepository;
+    
+    @Autowired
+    ReplyRepository replyRepository;
+    
+    // @Autowired
+    // ReplyRepository replyRepository2;
 
     Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     public List<Book> search(String name, String author, Long categoryId) {
         return bookRepo.findByBookNameAndAuthorAndCategoryId(name, author, categoryId);
+    }
 
+    @Override
+    public Book findWithComments(Long bookId) {
+        Book book = bookRepo.findById(bookId).get();
+        List<Comment> comments = commentRepository.findByBookId(bookId);
+
+        if (comments.size() > 0) {
+            Comment ca = comments.get(0);
+            List<Reply> replylar = replyRepository.findByCommentId(ca.getId());
+            ca.setReplys(replylar);
+        }
+        book.setComments(comments);
+        return book;
     }
 
     public Book create(BookCreateRequest request) {

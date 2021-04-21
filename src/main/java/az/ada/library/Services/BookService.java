@@ -18,4 +18,6 @@ public interface BookService {
 
     public List<Book> getBooksOfCurrentUser();
 
+    public Book findWithComments(Long bookId);
+
 }
